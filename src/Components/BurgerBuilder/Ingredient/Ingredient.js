@@ -1,10 +1,10 @@
 import React from 'react';
 import './Ingredient.css'
-import BreadTop from '../../../assets/images/top.jpg';
-import BreadBottom from '../../../assets/images/bottom.jpg';
-import Meat from '../../../assets/images/meat.jpg';
-import Salad from '../../../assets/images/salad.jpg';
-import Cheese from '../../../assets/images/cheese.jpg';
+import BreadTop from '../../../assets/images/top.png';
+import BreadBottom from '../../../assets/images/bottom.png';
+import Meat from '../../../assets/images/meat.png';
+import Salad from '../../../assets/images/salad.png';
+import Cheese from '../../../assets/images/cheese.png';
 
 const Ingredient = props => {
 
