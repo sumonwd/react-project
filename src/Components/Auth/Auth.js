@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { Formik } from 'formik'
 
- import {auth} from '../../redux/authActionCreators'
-import {connect} from 'react-redux'
- const mapDispatchToProps = dispatch => {
-     return {
-         auth: (email, password,mode) => dispatch(auth(email, password, mode))
-     }
- }
+import { auth } from '../../redux/authActionCreators'
+import { connect } from 'react-redux'
+import Spinner from '../Spinner/Spinner'
+import {Alert} from 'reactstrap'
+const mapDispatchToProps = dispatch => {
+    return {
+        auth: (email, password, mode) => dispatch(auth(email, password, mode))
+    }
+}
+const mapStateToProps = state => {
+    return {
+        authLoading: state.authLoading,
+        authFaileMsg: state.authFaileMsg
+    }
+}
 class Auth extends Component {
     state = {
         mode: "Sign Up"
@@ -18,8 +26,15 @@ class Auth extends Component {
         })
     }
     render() {
-        return (
-            <div>
+        let err = null;
+        if (this.props.authFaileMsg !== null) {
+            err = <Alert color="danger">{this.props.authFaileMsg}</Alert>
+        }
+        let form = null;
+        if (this.props.authLoading) {
+            form = <Spinner/>
+        } else {
+            form = (
                 <Formik
                     initialValues={
                         {
@@ -43,31 +58,31 @@ class Auth extends Component {
 
                         if (!values.password) {
                             errors.password = "Required";
-                        }else if (values.password.length < 4) {
+                        } else if (values.password.length < 4) {
                             errors.password = "Must be atleast 4 characters!";
                         }
                         if (this.state.mode === "Sign Up") {
-                            
+
                             if (!values.passwordConfirm) {
                                 errors.passwordConfirm = "Required";
-                            }else if (values.passwordConfirm !== values.password) {
+                            } else if (values.passwordConfirm !== values.password) {
                                 errors.passwordConfirm = "Password does not match!";
                             }
                         }
                         return errors;
                     }}
                 >
-                    {({ values, handleChange, handleSubmit, errors }) => (<div style={{ 
+                    {({ values, handleChange, handleSubmit, errors }) => (<div style={{
                         border: "1px solid grey",
                         padding: "50px",
                         borderRadius: "7px"
-                     }}>
-                         <button style={{ 
-                             width: "100%",
-                             color: "#fff",
-                             backgroundColor: "#d70f64"
-                          }} className="btn mb-2" 
-                          onClick={this.switchModehandler}>Switch To {this.state.mode === "Sign Up" ? "Login": 'Sign Up'}</button>
+                    }}>
+                        <button style={{
+                            width: "100%",
+                            color: "#fff",
+                            backgroundColor: "#d70f64"
+                        }} className="btn mb-2"
+                            onClick={this.switchModehandler}>Switch To {this.state.mode === "Sign Up" ? "Login" : 'Sign Up'}</button>
                         <form onSubmit={handleSubmit}>
                             <input
                                 name="email"
@@ -75,7 +90,7 @@ class Auth extends Component {
                                 className="form-control"
                                 value={values.email}
                                 onChange={handleChange} />
-                               <span className="text-danger"> {errors.email}</span>
+                            <span className="text-danger"> {errors.email}</span>
                             <br />
                             <input
                                 name="password"
@@ -83,7 +98,7 @@ class Auth extends Component {
                                 className="form-control"
                                 value={values.password}
                                 onChange={handleChange} />
-                                 <span className="text-danger"> {errors.password}</span>
+                            <span className="text-danger"> {errors.password}</span>
                             <br />
                             {this.state.mode === "Sign Up" ? <div><input
                                 name="passwordConfirm"
@@ -91,16 +106,22 @@ class Auth extends Component {
                                 className="form-control"
                                 value={values.passwordConfirm}
                                 onChange={handleChange} />
-                                 <span className="text-danger"> {errors.passwordConfirm}</span>
-                            <br /></div> : null}
-                            
-                            <button type="submit" className="btn btn-success">{this.state.mode === "Sign Up" ? "Sign Up": "Login"}</button>
+                                <span className="text-danger"> {errors.passwordConfirm}</span>
+                                <br /></div> : null}
+
+                            <button type="submit" className="btn btn-success">{this.state.mode === "Sign Up" ? "Sign Up" : "Login"}</button>
                         </form>
                     </div>)}
                 </Formik>
+            )
+        }
+        return (
+            <div>
+                {err}
+                {form}
             </div>
         );
     }
 }
 
-export default connect(null, mapDispatchToProps) (Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
